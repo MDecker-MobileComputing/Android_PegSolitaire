@@ -35,8 +35,11 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     /** Textfarbe für Button mit aktivem Spielstein. */
     private static final int TEXTFARBE_ROT = 0xffff0000;
 
-    /** Textfarbe für Sprung ausgewählten Button/Spielstein. */
+    /** Textfarbe für zum Sprung ausgewählten Button/Spielstein. */
     private static final int TEXTFARBE_GRAU = 0xff808080;
+
+    /** // Unicode-Zeichen "Black Square" für einen "Spielstein". */
+    private static final String SPIELSTEIN_ZEICHEN = "■";
 
     /**
      * Array mit zwei Dimensionen für initialen Zustand Spielfeld.
@@ -82,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
      * besetztes Feld ausgewählt werden; wenn diese Variable nicht den Wert {@code null}
      * hat, dann muss ein leeres Feld ausgewählt werden.
      */
-    private Button _quelleButton = null;
+    private Button _startButton = null;
 
 
     @Override
@@ -124,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     /**
      * Konfiguration der ActionBar; siehe auch Methode {@link #onCreateOptionsMenu(Menu)}.
      * Der Untertitel mit der aktuellen Anzahl der Spielsteine wird von der Methode
-     * {@link #aktualisierenAnzeigeAnzahlSpielsteine()}.
+     * {@link #aktualisiereAnzeigeAnzahlSpielsteine()}.
      */
     private void actionBarKonfigurieren() {
 
@@ -183,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             public void onClick(DialogInterface dialog, int which) {
 
                 initialisiereSpielfeld();
-                _quelleButton = null;
+                _startButton = null;
             }
         };
 
@@ -250,13 +253,13 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         }
 
         Log.i(TAG4LOGGING, "Anzahl Spielsteine: " + _anzahlSpielsteineAktuell);
-        aktualisierenAnzeigeAnzahlSpielsteine();
+        aktualisiereAnzeigeAnzahlSpielsteine();
     }
 
     private void erzeugeButtonBesetzt(GridLayout gridLayout, int indexZeile, int indexSpalte) {
 
         Button buttonBesetzt = new Button(this);
-        buttonBesetzt.setText("■"); // Unicode-Zeichen "Black Square" für "Spielstein"
+        buttonBesetzt.setText(SPIELSTEIN_ZEICHEN);
         buttonBesetzt.setTextColor(TEXTFARBE_ROT);
         buttonBesetzt.setTextSize(22.0f); // "large" als Schriftgröße
         buttonBesetzt.setLayoutParams(_layoutFuerSpielfeld);
@@ -278,6 +281,10 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         buttonLeer.setLayoutParams(_layoutFuerSpielfeld);
         buttonLeer.setOnClickListener(this);
 
+        // Einstellungen für den Fall, dass der Button mal ein besetztes Feld repräsentiert
+        buttonLeer.setTextColor(TEXTFARBE_ROT);
+        buttonLeer.setTextSize(22.0f);
+
         gridLayout.addView(buttonLeer);
 
         _buttonArray[indexZeile][indexSpalte] = buttonLeer;
@@ -286,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         buttonLeer.setTag(pos);
     }
 
-    private void aktualisierenAnzeigeAnzahlSpielsteine() {
+    private void aktualisiereAnzeigeAnzahlSpielsteine() {
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -300,60 +307,63 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
      *
      * @param view Die Activity-Instanz wird nur den Buttons auf dem Spielfeld als
      *             Event-Handler-Objekt zugewiesen, deswegen ist das Argument
-     *             immer ein Button-Objekt welches als "Tag" ein Objekt der
+     *             immer ein Button-Objekt, welches als "Tag" ein Objekt der
      *             Klasse {@link SpielfeldPosition} referenziert.
      */
     @Override
     public void onClick(View view) {
 
-        SpielfeldPosition position = (SpielfeldPosition) view.getTag();
+        Button geklicktButton = (Button)view;
+
+        SpielfeldPosition position = (SpielfeldPosition) geklicktButton.getTag();
 
         // Herausfinden, ob auf ein leeres oder ein besetztes Feld geklickt wurde
         int indexZeile = position.getIndexZeile();
         int indexSpalte = position.getIndexSpalte();
 
         SpielfeldStatusEnum spielfeldStatus = _spielfeldArray[indexZeile][indexSpalte];
-
         switch (spielfeldStatus) {
 
             case BESETZT:
 
-                if (_quelleButton != null) {
+                if (_startButton != null) {
 
                     Toast.makeText(this, "Ungültiger Zug!",
                             Toast.LENGTH_LONG).show();
-                    _quelleButton.setTextColor(TEXTFARBE_ROT);
-                    _quelleButton = null;
+                    _startButton.setTextColor(TEXTFARBE_ROT);
+                    _startButton = null;
 
-                    Log.w(TAG4LOGGING, "Zielfeld von Zug war nicht leer.")
+                    Log.w(TAG4LOGGING, "Zielfeld von Zug war nicht leer.");
 
                 } else {
 
-                    Button button = (Button)view;
-                    button.setTextColor(TEXTFARBE_GRAU);
-                    _quelleButton = button;
+                    geklicktButton.setTextColor(TEXTFARBE_GRAU);
+                    _startButton = geklicktButton;
                 }
                 break;
 
             case LEER:
 
-                if (_quelleButton == null) {
+                if (_startButton == null) {
 
                     Toast.makeText(this, "Ungültiger Zug: Zuerst einen Spielstein wählen!",
                             Toast.LENGTH_LONG).show();
 
                 } else {
 
-                    SpielfeldPosition startPosition = (SpielfeldPosition)  _quelleButton.getTag();
+                    SpielfeldPosition startPosition = (SpielfeldPosition)  _startButton.getTag();
                     SpielfeldPosition uebersprungPosition = getUebersprungenerStein(startPosition, position);
                     if (uebersprungPosition != null) {
 
-                        Toast.makeText(this, "GÜltiger Zug, Not Implemented yet", Toast.LENGTH_LONG).show();
+                        Log.i(TAG4LOGGING, "Zug war gültig.");
+
+                        sprungDurchfuehren(_startButton, geklicktButton, uebersprungPosition);
+
 
                     } else {
 
-                        _quelleButton.setTextColor(TEXTFARBE_ROT);
-                        _quelleButton = null;
+                        _startButton.setTextColor(TEXTFARBE_ROT);
+                        _startButton = null;
                         Toast.makeText(this, "Ungültiger Zug!", Toast.LENGTH_LONG).show();
                     }
                 }
@@ -361,9 +371,48 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 break;
 
             default:
-                Log.e(TAG4LOGGING, "Interner Fehler: Unerwarteter Status von angeklicktem Spielfeld.");
+                Log.e(TAG4LOGGING, "Interner Fehler: Unerwarteter Status von angeklicktem Spielfeld: " + spielfeldStatus);
         }
     }
+
+    /**
+     * Sprung durchführen. Diese Methode darf nur aufgerufen werden, wenn vorher festgestellt wurde,
+     * dass es sich um einen gültigen Zug handelt.
+     */
+    private void sprungDurchfuehren(Button startButton, Button zielButton, SpielfeldPosition uebersprungenPos) {
+
+        startButton.setText("");
+        int startButtonZeile = ((SpielfeldPosition)startButton.getTag()).getIndexZeile();
+        int startButtonSpalte = ((SpielfeldPosition)startButton.getTag()).getIndexSpalte();
+        _spielfeldArray[startButtonZeile][startButtonSpalte] = LEER;
+
+        zielButton.setText(SPIELSTEIN_ZEICHEN);
+        int zielButtonZeile = ((SpielfeldPosition)zielButton.getTag()).getIndexZeile();
+        int zielButtonSpalte = ((SpielfeldPosition)zielButton.getTag()).getIndexSpalte();
+        _spielfeldArray[zielButtonZeile][zielButtonSpalte] = BESETZT;
+
+        _anzahlSpielsteineAktuell--;
+        aktualisiereAnzeigeAnzahlSpielsteine();
+
+        _startButton = null;
+
+        if (_anzahlSpielsteineAktuell == 1) {
+
+            zeigeGewonnenDialog();
+        }
+    }
+
+    private void zeigeGewonnenDialog() {
+
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setTitle("Glückwunsch!");
+        dialogBuilder.setMessage("Sie haben das Spiel gelöst!");
+        dialogBuilder.setPositiveButton("Weiter", null);
+
+        AlertDialog dialog = dialogBuilder.create();
+        dialog.show();
+    }
+
 
     /**
      * Überprüft, ob ein Zug von {@code startPos} zu {@code zielPos} gültig ist, also ob genau
