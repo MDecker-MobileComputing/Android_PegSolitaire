@@ -1,5 +1,6 @@
 package de.mide.pegsolitaire;
 
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,18 +8,26 @@ import static de.mide.pegsolitaire.SpielfeldEnum.LEER;
 import static de.mide.pegsolitaire.SpielfeldEnum.KEIN_FELD;
 import static de.mide.pegsolitaire.SpielfeldEnum.BESETZT;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    /** Zweidimensionalery Array für initialen Zustand Spielfeld. */
+    public static final String TAG4LOGGING = "PegSolitaire";
+
+    /**
+     * Array mit zwei Dimensionen für initialen Zustand Spielfeld.
+     * Der erste Index ist die Zeile, der zweite Index ist die Spalte.
+     */
     private static final SpielfeldEnum[][] SPIELFELD_VORLAGE_ARRAY =
     {
             { KEIN_FELD, KEIN_FELD, BESETZT, BESETZT, BESETZT, KEIN_FELD, KEIN_FELD },
@@ -29,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
             { KEIN_FELD, KEIN_FELD, BESETZT, BESETZT, BESETZT, KEIN_FELD, KEIN_FELD },
             { KEIN_FELD, KEIN_FELD, BESETZT, BESETZT, BESETZT, KEIN_FELD, KEIN_FELD }
     };
+
+    /** 2D-Array mit den Bildern für die einzelnen Spielfelder. */
+    private static ImageButton[][] _imageButtonArray = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,9 +83,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Event-Handler für Menü-Einträge der Action-Bar.
+     * Event-Handler für Menü-Einträge der Action-Bar; die Menü-Einträge werden
+     * in der Methode {@link #onCreateOptionsMenu(Menu)} aus einer Ressourcen-
+     * Datei geladen.
      *
-     * @param item The menu item that was selected.
+     * @param item Ausgewählter Menü-Eintrag.
      *
      * @return Es wird genau dann <i>true</i> zurückgegeben, wenn wir
      *         in dieser Methode das Ereignis verarbeiten konnten.
@@ -98,15 +112,65 @@ public class MainActivity extends AppCompatActivity {
      */
     private void erzeugeGridLayout() {
 
-        GridLayout.LayoutParams layoutParams = new GridLayout.LayoutParams();
-        layoutParams.height = GridLayout.LayoutParams.MATCH_PARENT;
-        layoutParams.width = GridLayout.LayoutParams.MATCH_PARENT;
-        layoutParams.setMargins(10, 10, 10, 10);
+        GridLayout.LayoutParams gridLayoutParams = new GridLayout.LayoutParams();
+        gridLayoutParams.height = GridLayout.LayoutParams.MATCH_PARENT;
+        gridLayoutParams.width = GridLayout.LayoutParams.MATCH_PARENT;
+        gridLayoutParams.setMargins(10, 10, 10, 10);
 
         GridLayout gridLayout = new GridLayout(this);
-        gridLayout.setLayoutParams(layoutParams);
+        gridLayout.setLayoutParams(gridLayoutParams);
 
-        LinearLayout hauptLayout = findViewById(R.id.HauptLayoutMainActivity);
-        hauptLayout.addView(gridLayout);
+        int anzahlZeilen = SPIELFELD_VORLAGE_ARRAY.length;
+        int anzahlSpalten = SPIELFELD_VORLAGE_ARRAY[0].length; // 2D-Array ist rechteckig!
+
+        _imageButtonArray = new ImageButton[anzahlZeilen][anzahlSpalten];
+
+        gridLayout.setRowCount(anzahlZeilen);
+        gridLayout.setColumnCount( anzahlSpalten );
+        gridLayout.setBackgroundColor(0xFF0000);
+
+        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams( WRAP_CONTENT, WRAP_CONTENT );
+
+        int buttonId = 1;
+        for (int i = 0; i < anzahlZeilen; i++) {
+
+            for (int j = 0; j < anzahlZeilen; j++) {
+
+                /*
+                ImageButton imageButton = new ImageButton(this);
+                imageButton.setLayoutParams(layoutFuerGridElement);
+
+                if (i % 2 == 0) {
+
+                    imageButton.setBackgroundColor(0x00FF00);
+
+                } else {
+
+                    imageButton.setBackgroundColor(0xFF0000);
+                }
+                 */
+
+                Button button = new Button(this);
+                button.setText("abc");
+                button.setLayoutParams(lp);
+                button.setId( buttonId );
+
+                GridLayout.Spec rowSpan = GridLayout.spec(GridLayout.UNDEFINED, 1, 1f);
+                GridLayout.Spec colSpan = GridLayout.spec(GridLayout.UNDEFINED, 1, 1f);
+                GridLayout.LayoutParams gridParam = new GridLayout.LayoutParams( rowSpan, colSpan );
+
+                gridLayout.addView(button, gridParam);
+
+                //_imageButtonArray[i][j] = imageButton;
+
+                Log.i(TAG4LOGGING, "Spielfeld erzeugt: i=" + i + ", j=" + j + ".");
+
+                buttonId++;
+            }
+        }
+
+
+        LinearLayout oberstesLayout = findViewById(R.id.HauptLayoutMainActivity);
+        oberstesLayout.addView(gridLayout);
     }
 }
