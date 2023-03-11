@@ -53,11 +53,12 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             { KEIN_FELD, KEIN_FELD, BESETZT, BESETZT, BESETZT, KEIN_FELD, KEIN_FELD }
         };
 
-    /** Aktueller Zustand der einzelnen Felder. */
-    private SpielfeldStatusEnum[][] _spielfeldArray = null;
-
     private int _anzahlZeilen = SPIELFELD_VORLAGE_ARRAY.length;
+
     private int _anzahlSpalten = SPIELFELD_VORLAGE_ARRAY[0].length;
+
+    /** Aktueller Zustand der einzelnen Felder als 2-D-Array. */
+    private SpielfeldStatusEnum[][] _spielfeldArray = null;
 
     /** Array mit Buttons für die einzelnen Spielfeldpositionen. */
     private Button[][] _buttonArray = new Button[_anzahlZeilen][_anzahlSpalten];
@@ -182,6 +183,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             public void onClick(DialogInterface dialog, int which) {
 
                 initialisiereSpielfeld();
+                _quelleButton = null;
             }
         };
 
@@ -306,8 +308,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
         SpielfeldPosition position = (SpielfeldPosition) view.getTag();
 
-        Log.i(TAG4LOGGING, "Spielfeld angeklickt: " + position);
-
         // Herausfinden, ob auf ein leeres oder ein besetztes Feld geklickt wurde
         int indexZeile = position.getIndexZeile();
         int indexSpalte = position.getIndexSpalte();
@@ -320,10 +320,12 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
                 if (_quelleButton != null) {
 
-                    Toast.makeText(this, "Ungültiger Zug: Zielfeld muss leer sein!",
+                    Toast.makeText(this, "Ungültiger Zug!",
                             Toast.LENGTH_LONG).show();
                     _quelleButton.setTextColor(TEXTFARBE_ROT);
                     _quelleButton = null;
+
+                    Log.w(TAG4LOGGING, "Zielfeld von Zug war nicht leer.")
 
                 } else {
 
@@ -345,6 +347,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                     SpielfeldPosition startPosition = (SpielfeldPosition)  _quelleButton.getTag();
                     SpielfeldPosition uebersprungPosition = getUebersprungenerStein(startPosition, position);
                     if (uebersprungPosition != null) {
+
+                        Toast.makeText(this, "GÜltiger Zug, Not Implemented yet", Toast.LENGTH_LONG).show();
 
                     } else {
 
@@ -384,17 +388,25 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         if (startPositionZeile == zielPositionZeile) { // Zug in horizontaler Richtung
 
             int deltaSpalte = zielPositionSpalte - startPositionSpalte;
-            if (Math.abs(deltaSpalte) != 1) {
+            if (Math.abs(deltaSpalte) != 2) {
 
-                Log.w(TAG4LOGGING, "Sprungweite für horizontalen Zug muss genau 1 betragen.");
+                Log.w(TAG4LOGGING, "Es wurde nicht genau ein Feld bei einem horizontalen Zug übersprungen.");
                 return null;
             }
 
             // ist übersprungenes Feld besetzt?
             uebersprungenZeile = startPositionZeile;
-            uebersprungenSpalte = startPositionSpalte + deltaSpalte;
+            uebersprungenSpalte = startPositionSpalte + deltaSpalte/2;
 
-            
+            if (_spielfeldArray[uebersprungenZeile][uebersprungenSpalte] != BESETZT) {
+
+                Log.w(TAG4LOGGING, "Horizontal übersprungenes Feld ist nicht besetzt!");
+                return null;
+
+            } else {
+
+                return new SpielfeldPosition(uebersprungenZeile, uebersprungenSpalte);
+            }
 
 
         } else if (startPositionSpalte == zielPositionSpalte) { // Zug in vertikaler Richtung
@@ -402,16 +414,25 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             // Sprung-Differenz muss genau 1 betragen
 
             int deltaZeile = zielPositionZeile - startPositionZeile;
-            if (Math.abs(deltaZeile) != 1) {
+            if (Math.abs(deltaZeile) != 2) {
 
-                Log.w(TAG4LOGGING, "Sprungweite für vertikalen Zug muss genau 1 betragen.");
+                Log.w(TAG4LOGGING, "Es wurde nicht genau ein Feld bei einem vertikalen Zug übersprungen.");
                 return null;
             }
 
             // ist übersprungenes Feld besetzt?
-            uebersprungenZeile = startPositionZeile + deltaZeile;
+            uebersprungenZeile = startPositionZeile + deltaZeile/2;
             uebersprungenSpalte = startPositionSpalte;
 
+            if (_spielfeldArray[uebersprungenZeile][uebersprungenSpalte] != BESETZT) {
+
+                Log.w(TAG4LOGGING, "Vertikal übersprungenes Feld ist nicht besetzt!");
+                return null;
+
+            } else {
+
+                return new SpielfeldPosition(uebersprungenZeile, uebersprungenSpalte);
+            }
         }
 
         Log.w(TAG4LOGGING, "Diagonale Züge sind nicht zulässig.");
