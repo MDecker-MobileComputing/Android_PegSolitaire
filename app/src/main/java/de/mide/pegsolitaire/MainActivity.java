@@ -28,6 +28,12 @@ import android.widget.Toast;
 import de.mide.pegsolitaire.model.SpielfeldStatusEnum;
 import de.mide.pegsolitaire.model.SpielfeldPosition;
 
+/**
+ * Activity für Spiel "Peg Solitaire".
+ * <br><br>>
+ *
+ * This project is licensed under the terms of the BSD 3-Clause License.
+ */
 public class MainActivity extends AppCompatActivity implements OnClickListener {
 
     public static final String TAG4LOGGING = "PegSolitaire";
@@ -38,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     /** Textfarbe für zum Sprung ausgewählten Button/Spielstein. */
     private static final int TEXTFARBE_GRAU = 0xff808080;
 
-    /** // Unicode-Zeichen "Black Square" für einen "Spielstein". */
+    /** Unicode-Zeichen "Black Square" für einen "Spielstein". */
     private static final String SPIELSTEIN_ZEICHEN = "■";
 
     /**
@@ -87,6 +93,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
      */
     private Button _startButton = null;
 
+    /** GridLayout mit Spielfeld. */
+    private GridLayout _gridLayout = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +104,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         setContentView(R.layout.activity_main);
 
         Log.i(TAG4LOGGING, "Zeilen=" + _anzahlZeilen + ", Spalten=" + _anzahlSpalten + "px.");
+
+        _gridLayout = findViewById(R.id.spielfeldGridLayout);
 
         holeDisplayAufloesung();
         actionBarKonfigurieren();
@@ -179,6 +190,10 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         }
     }
 
+    /**
+     * Der Nutzer wird mit einem Dialog gefragt, ob er wirklich ein neues Spiel starten
+     * möchte. Wenn er dies bestätigt, dann wird das Spielfeld initialisiert.
+     */
     public void sicherheitsabfrageFuerNeuesSpiel() {
 
         DialogInterface.OnClickListener onJaButtonListener = new DialogInterface.OnClickListener() {
@@ -207,16 +222,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
      */
     private void initialisiereSpielfeld() {
 
-        GridLayout gridLayout = findViewById(R.id.spielfeldGridLayout);
+        if (_gridLayout.getRowCount() == 0) {
 
-        if (gridLayout.getRowCount() == 0) {
-
-            gridLayout.setColumnCount(_anzahlSpalten);
-            gridLayout.setColumnCount(_anzahlZeilen);
+            _gridLayout.setColumnCount(_anzahlSpalten);
+            _gridLayout.setColumnCount(_anzahlZeilen);
 
         } else { // Methode wird nicht zum ersten Mal aufgerufen
 
-            gridLayout.removeAllViews();
+            _gridLayout.removeAllViews();
         }
 
         _anzahlSpielsteineAktuell = 0;
@@ -233,16 +246,16 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 switch (spielfeldStatus) {
 
                     case BESETZT:
-                        erzeugeButtonBesetzt(gridLayout, i, j);
+                        erzeugeButtonBesetzt(i, j);
                         break;
 
                     case LEER:
-                        erzeugeButtonLeer(gridLayout, i, j);
+                        erzeugeButtonLeer(i, j);
                         break;
 
                     case KEIN_FELD: // außerhalb von Rand
                             Space space = new Space(this); // Dummy-Element
-                            gridLayout.addView(space);
+                        _gridLayout.addView(space);
                         break;
 
                     default: Log.e(TAG4LOGGING,
@@ -256,7 +269,13 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         aktualisiereAnzeigeAnzahlSpielsteine();
     }
 
-    private void erzeugeButtonBesetzt(GridLayout gridLayout, int indexZeile, int indexSpalte) {
+    /**
+     * Button für Position mit Spielstein auf Spielbrett.
+     *
+     * @param indexZeile Index der Zeile (0-basiert) im GridLayout
+     * @param indexSpalte Index der Spalte (0-basiert) im GridLayout
+     */
+    private void erzeugeButtonBesetzt(int indexZeile, int indexSpalte) {
 
         Button buttonBesetzt = new Button(this);
         buttonBesetzt.setText(SPIELSTEIN_ZEICHEN);
@@ -265,7 +284,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         buttonBesetzt.setLayoutParams(_layoutFuerSpielfeld);
         buttonBesetzt.setOnClickListener(this);
 
-        gridLayout.addView(buttonBesetzt);
+        _gridLayout.addView(buttonBesetzt);
         _buttonArray[indexZeile][indexSpalte] = buttonBesetzt;
 
         _anzahlSpielsteineAktuell++;
@@ -274,7 +293,13 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         buttonBesetzt.setTag(pos);
     }
 
-    private void erzeugeButtonLeer(GridLayout gridLayout, int indexZeile, int indexSpalte) {
+    /**
+     * Button für Position ohne Spielstein auf Spielbrett.
+     *
+     * @param indexZeile Index der Zeile (0-basiert) im GridLayout
+     * @param indexSpalte Index der Spalte (0-basiert) im GridLayout
+     */
+    private void erzeugeButtonLeer(int indexZeile, int indexSpalte) {
 
         Button buttonLeer = new Button(this);
         buttonLeer.setText("");
@@ -285,7 +310,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         buttonLeer.setTextColor(TEXTFARBE_ROT);
         buttonLeer.setTextSize(22.0f);
 
-        gridLayout.addView(buttonLeer);
+        _gridLayout.addView(buttonLeer);
 
         _buttonArray[indexZeile][indexSpalte] = buttonLeer;
 
@@ -293,6 +318,10 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         buttonLeer.setTag(pos);
     }
 
+    /**
+     * Anzeige der Anzahl der verbleibenden Spielsteine als Untertitel
+     * der ActionBar aktualisieren.
+     */
     private void aktualisiereAnzeigeAnzahlSpielsteine() {
 
         ActionBar actionBar = getSupportActionBar();
@@ -320,8 +349,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         // Herausfinden, ob auf ein leeres oder ein besetztes Feld geklickt wurde
         int indexZeile = position.getIndexZeile();
         int indexSpalte = position.getIndexSpalte();
-
         SpielfeldStatusEnum spielfeldStatus = _spielfeldArray[indexZeile][indexSpalte];
+
         switch (spielfeldStatus) {
 
             case BESETZT:
@@ -357,8 +386,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
                         Log.i(TAG4LOGGING, "Zug war gültig.");
 
-                        sprungDurchfuehren(_startButton, geklicktButton, uebersprungPosition);
+                        Button ubersprungButton = holeButtonFuerPosition(uebersprungPosition);
 
+                        sprungDurchfuehren(_startButton, geklicktButton, uebersprungPosition);
 
                     } else {
 
@@ -371,7 +401,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 break;
 
             default:
-                Log.e(TAG4LOGGING, "Interner Fehler: Unerwarteter Status von angeklicktem Spielfeld: " + spielfeldStatus);
+                Log.e(TAG4LOGGING, "Interner Fehler: Unerwarteter Status von angeklicktem Spielfeld: " +
+                        spielfeldStatus);
         }
     }
 
@@ -390,6 +421,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         int zielButtonZeile = ((SpielfeldPosition)zielButton.getTag()).getIndexZeile();
         int zielButtonSpalte = ((SpielfeldPosition)zielButton.getTag()).getIndexSpalte();
         _spielfeldArray[zielButtonZeile][zielButtonSpalte] = BESETZT;
+        zielButton.setTextColor(TEXTFARBE_ROT);
 
         _anzahlSpielsteineAktuell--;
         aktualisiereAnzeigeAnzahlSpielsteine();
@@ -402,6 +434,33 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         }
     }
 
+    /**
+     * Methode sucht im GridLayout nach dem Button, der als Tag
+     * {@code position} referenziert.
+     *
+     * @param position Position auf Spielfeld von gesuchtem Button
+     * @return Gesuchter Button oder {@code null}, wenn der Button nicht gefunden wurde.
+     */
+    private Button holeButtonFuerPosition(SpielfeldPosition position) {
+
+        int anzahlKindelemente = _gridLayout.getChildCount();
+
+        for (int i = 0; i < anzahlKindelemente; i++) {
+
+            View view = _gridLayout.getChildAt(i);
+            if (view.getTag() == position) {
+
+                return (Button)view;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Methode zeigt einen Dialog an, wenn der Nutzer das Spiel gelöst hat
+     * (es ist nur noch ein Spielstein übrig geblieben).
+     */
     private void zeigeGewonnenDialog() {
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
