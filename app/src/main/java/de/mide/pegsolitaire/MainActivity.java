@@ -7,6 +7,7 @@ import static de.mide.pegsolitaire.SpielfeldEnum.LEER;
 import static de.mide.pegsolitaire.SpielfeldEnum.KEIN_FELD;
 import static de.mide.pegsolitaire.SpielfeldEnum.BESETZT;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -41,8 +42,6 @@ public class MainActivity extends AppCompatActivity {
             { KEIN_FELD, KEIN_FELD, BESETZT, BESETZT, BESETZT, KEIN_FELD, KEIN_FELD }
     };
 
-    /** 2D-Array mit den Bildern für die einzelnen Spielfelder. */
-    private static ImageButton[][] _imageButtonArray = null;
 
     private int _anzahlZeilen = SPIELFELD_VORLAGE_ARRAY.length;
     private int _anzahlSpalten = SPIELFELD_VORLAGE_ARRAY[0].length;
@@ -51,8 +50,6 @@ public class MainActivity extends AppCompatActivity {
     private int _displayHoehe = -1;
 
     private int _seitenlaengeSpielstein = -1;
-
-    private int _anzahlSpielsteineZuBeginn = -1;
 
     private int _anzahlSpielsteineAktuell = -1;
 
@@ -66,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
         holeDisplayAufloesung();
         actionBarKonfigurieren();
-        fuelleSpielfeld();
+        initialisiereSpielfeld();
     }
 
     /**
@@ -150,13 +147,24 @@ public class MainActivity extends AppCompatActivity {
     /**
      * GridLayout mit Spielfeld programmatisch befüllen.
      */
-    private void fuelleSpielfeld() {
+    private void initialisiereSpielfeld() {
 
         GridLayout gridLayout = findViewById(R.id.spielfeldGridLayout);
 
+        if (gridLayout.getRowCount() == 0) {
+
+            gridLayout.setColumnCount(_anzahlSpalten);
+            gridLayout.setColumnCount(_anzahlZeilen);
+
+        } else { // Methode wird nicht zum ersten Mal aufgerufen
+
+            gridLayout.removeAllViews();
+        }
+
+
         ViewGroup.LayoutParams layoutParamFuerFeld = new ViewGroup.LayoutParams( _seitenlaengeSpielstein,
                                                                                  _seitenlaengeSpielstein);
-        _anzahlSpielsteineZuBeginn = 0;
+        _anzahlSpielsteineAktuell = 0;
 
         for (int i = 0; i < _anzahlZeilen; i++) {
 
@@ -166,16 +174,16 @@ public class MainActivity extends AppCompatActivity {
 
                     case BESETZT:
                             Button buttonBesetzt = new Button(this);
-                            buttonBesetzt.setText("");
+                            buttonBesetzt.setText("■"); // Unicode-Zeichen "Black Square" für "Spielstein"
+                            buttonBesetzt.setTextColor(0xffff0000);
                             buttonBesetzt.setLayoutParams(layoutParamFuerFeld);
-                            _anzahlSpielsteineZuBeginn++;
                             gridLayout.addView(buttonBesetzt);
+                            _anzahlSpielsteineAktuell++;
                         break;
 
                     case LEER:
                             Button buttonLeer = new Button(this);
-                            buttonLeer.setText("L");
-                            //buttonLeer.setBackgroundColor(0x000000);
+                            buttonLeer.setText("");
                             buttonLeer.setLayoutParams(layoutParamFuerFeld);
                             gridLayout.addView(buttonLeer);
                         break;
@@ -191,8 +199,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        Log.i(TAG4LOGGING, "Anzahl Spielsteine: " + _anzahlSpielsteineZuBeginn);
-        _anzahlSpielsteineAktuell = _anzahlSpielsteineZuBeginn;
+        Log.i(TAG4LOGGING, "Anzahl Spielsteine: " + _anzahlSpielsteineAktuell);
         aktualisierenAnzeigeAnzahlSpielsteine();
     }
 

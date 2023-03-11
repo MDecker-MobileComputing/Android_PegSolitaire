@@ -9,9 +9,14 @@
         android:id="@+id/spielfeldGridLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:columnCount="7"
-        android:rowCount="7">
+        android:layout_gravity="center_vertical">
+
+        <!--
+                Anzahl Zeilen und Spalten von GridLayout wird programmatisch gesetzt.
+
+                layout_gravity="center_vertical", damit sich GridLayout in
+                horizontal in seinem Parent-Layout zentriert.
+          -->
 
     </GridLayout>
 
