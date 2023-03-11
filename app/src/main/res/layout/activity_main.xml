@@ -3,14 +3,13 @@
     android:id="@+id/HauptLayoutMainActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="10dp"
-    android:orientation="vertical"
     tools:context=".MainActivity" >
 
     <GridLayout
         android:id="@+id/spielfeldGridLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:columnCount="7"
         android:rowCount="7">
 

@@ -50,8 +50,11 @@ public class MainActivity extends AppCompatActivity {
     private int _displayBreite = -1;
     private int _displayHoehe = -1;
 
+    private int _seitenlaengeSpielstein = -1;
 
     private int _anzahlSpielsteineZuBeginn = -1;
+
+    private int _anzahlSpielsteineAktuell = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Log.i(TAG4LOGGING, "Zeilen=" + _anzahlZeilen + ", Spalten=" + _anzahlSpalten + "px.");
-
 
         holeDisplayAufloesung();
         actionBarKonfigurieren();
@@ -83,10 +85,16 @@ public class MainActivity extends AppCompatActivity {
         _displayHoehe = displayMetrics.heightPixels;
 
         Log.i(TAG4LOGGING, "displayBreite=" + _displayBreite + "px, displayHoehe=" + _displayHoehe);
+
+        // Die MainActivity ist in der Manifest-Datei auf Portrait-Modus festgesetzt, also
+        // gilt immer: _displayBreite < _displayHoehe
+        _seitenlaengeSpielstein = _displayBreite / _anzahlSpalten;
     }
 
     /**
      * Konfiguration der ActionBar; siehe auch Methode {@link #onCreateOptionsMenu(Menu)}.
+     * Der Untertitel mit der aktuellen Anzahl der Spielsteine wird von der Methode
+     * {@link #aktualisierenAnzeigeAnzahlSpielsteine()}.
      */
     private void actionBarKonfigurieren() {
 
@@ -98,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         actionBar.setTitle( "Peg Solitaire" );
-        actionBar.setSubtitle( "Brettspiel für eine Person" );
     }
 
     /**
@@ -147,12 +154,8 @@ public class MainActivity extends AppCompatActivity {
 
         GridLayout gridLayout = findViewById(R.id.spielfeldGridLayout);
 
-        int minDisplayHoeheBreite = Math.min( _displayBreite, _displayHoehe );
-
-        int quadratSeite = minDisplayHoeheBreite / _anzahlZeilen;
-
-        ViewGroup.LayoutParams layoutParamFuerFeld = new ViewGroup.LayoutParams( quadratSeite, quadratSeite);
-
+        ViewGroup.LayoutParams layoutParamFuerFeld = new ViewGroup.LayoutParams( _seitenlaengeSpielstein,
+                                                                                 _seitenlaengeSpielstein);
         _anzahlSpielsteineZuBeginn = 0;
 
         for (int i = 0; i < _anzahlZeilen; i++) {
@@ -189,5 +192,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
         Log.i(TAG4LOGGING, "Anzahl Spielsteine: " + _anzahlSpielsteineZuBeginn);
+        _anzahlSpielsteineAktuell = _anzahlSpielsteineZuBeginn;
+        aktualisierenAnzeigeAnzahlSpielsteine();
     }
+
+    private void aktualisierenAnzeigeAnzahlSpielsteine() {
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+
+            actionBar.setSubtitle( "Anzahl Spielsteine: " + _anzahlSpielsteineAktuell );
+        }
+    }
+
+
 }
