@@ -11,10 +11,8 @@
         android:id="@+id/spielfeldGridLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
         android:columnCount="7"
-        android:rowCount="7"
-        android:background="#FF0000" >
+        android:rowCount="7">
 
     </GridLayout>
 

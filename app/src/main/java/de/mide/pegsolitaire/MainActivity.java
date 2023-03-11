@@ -1,6 +1,5 @@
 package de.mide.pegsolitaire;
 
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,15 +8,18 @@ import static de.mide.pegsolitaire.SpielfeldEnum.KEIN_FELD;
 import static de.mide.pegsolitaire.SpielfeldEnum.BESETZT;
 
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
+import android.widget.Space;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -42,14 +44,45 @@ public class MainActivity extends AppCompatActivity {
     /** 2D-Array mit den Bildern für die einzelnen Spielfelder. */
     private static ImageButton[][] _imageButtonArray = null;
 
+    private int _anzahlZeilen = SPIELFELD_VORLAGE_ARRAY.length;
+    private int _anzahlSpalten = SPIELFELD_VORLAGE_ARRAY[0].length;
+
+    private int _displayBreite = -1;
+    private int _displayHoehe = -1;
+
+
+    private int _anzahlSpielsteineZuBeginn = -1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Log.i(TAG4LOGGING, "Zeilen=" + _anzahlZeilen + ", Spalten=" + _anzahlSpalten + "px.");
+
+
+        holeDisplayAufloesung();
         actionBarKonfigurieren();
-        erzeugeGridLayout();
+        fuelleSpielfeld();
+    }
+
+    /**
+     * Liest Auflösung von Display aus (Höhe und Breite) und
+     * schreibt die Werte in die entsprechenden Member-Variablen.
+     */
+    private void holeDisplayAufloesung() {
+
+        WindowManager windowManager = getWindowManager();
+        Display display       = windowManager.getDefaultDisplay();
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        display.getMetrics(displayMetrics);
+
+        _displayBreite = displayMetrics.widthPixels;
+        _displayHoehe = displayMetrics.heightPixels;
+
+        Log.i(TAG4LOGGING, "displayBreite=" + _displayBreite + "px, displayHoehe=" + _displayHoehe);
     }
 
     /**
@@ -108,69 +141,53 @@ public class MainActivity extends AppCompatActivity {
 
 
     /**
-     * GridLayout mit Spielfeld programmatisch erzeugen.
+     * GridLayout mit Spielfeld programmatisch befüllen.
      */
-    private void erzeugeGridLayout() {
+    private void fuelleSpielfeld() {
 
-        GridLayout.LayoutParams gridLayoutParams = new GridLayout.LayoutParams();
-        gridLayoutParams.height = GridLayout.LayoutParams.MATCH_PARENT;
-        gridLayoutParams.width = GridLayout.LayoutParams.MATCH_PARENT;
-        gridLayoutParams.setMargins(10, 10, 10, 10);
+        GridLayout gridLayout = findViewById(R.id.spielfeldGridLayout);
 
-        GridLayout gridLayout = new GridLayout(this);
-        gridLayout.setLayoutParams(gridLayoutParams);
+        int minDisplayHoeheBreite = Math.min( _displayBreite, _displayHoehe );
 
-        int anzahlZeilen = SPIELFELD_VORLAGE_ARRAY.length;
-        int anzahlSpalten = SPIELFELD_VORLAGE_ARRAY[0].length; // 2D-Array ist rechteckig!
+        int quadratSeite = minDisplayHoeheBreite / _anzahlZeilen;
 
-        _imageButtonArray = new ImageButton[anzahlZeilen][anzahlSpalten];
+        ViewGroup.LayoutParams layoutParamFuerFeld = new ViewGroup.LayoutParams( quadratSeite, quadratSeite);
 
-        gridLayout.setRowCount(anzahlZeilen);
-        gridLayout.setColumnCount( anzahlSpalten );
-        gridLayout.setBackgroundColor(0xFF0000);
+        _anzahlSpielsteineZuBeginn = 0;
 
-        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams( WRAP_CONTENT, WRAP_CONTENT );
+        for (int i = 0; i < _anzahlZeilen; i++) {
 
-        int buttonId = 1;
-        for (int i = 0; i < anzahlZeilen; i++) {
+            for (int j = 0; j < _anzahlZeilen; j++) {
 
-            for (int j = 0; j < anzahlZeilen; j++) {
+                switch (SPIELFELD_VORLAGE_ARRAY[i][j]) {
 
-                /*
-                ImageButton imageButton = new ImageButton(this);
-                imageButton.setLayoutParams(layoutFuerGridElement);
+                    case BESETZT:
+                            Button buttonBesetzt = new Button(this);
+                            buttonBesetzt.setText("");
+                            buttonBesetzt.setLayoutParams(layoutParamFuerFeld);
+                            _anzahlSpielsteineZuBeginn++;
+                            gridLayout.addView(buttonBesetzt);
+                        break;
 
-                if (i % 2 == 0) {
+                    case LEER:
+                            Button buttonLeer = new Button(this);
+                            buttonLeer.setText("L");
+                            //buttonLeer.setBackgroundColor(0x000000);
+                            buttonLeer.setLayoutParams(layoutParamFuerFeld);
+                            gridLayout.addView(buttonLeer);
+                        break;
 
-                    imageButton.setBackgroundColor(0x00FF00);
+                    case KEIN_FELD:
+                            Space space = new Space(this);
+                            gridLayout.addView(space);
+                        break;
 
-                } else {
-
-                    imageButton.setBackgroundColor(0xFF0000);
+                    default: Log.e(TAG4LOGGING, "Unerwarteter Wert für initialen Zustand von Feld.");
                 }
-                 */
 
-                Button button = new Button(this);
-                button.setText("abc");
-                button.setLayoutParams(lp);
-                button.setId( buttonId );
-
-                GridLayout.Spec rowSpan = GridLayout.spec(GridLayout.UNDEFINED, 1, 1f);
-                GridLayout.Spec colSpan = GridLayout.spec(GridLayout.UNDEFINED, 1, 1f);
-                GridLayout.LayoutParams gridParam = new GridLayout.LayoutParams( rowSpan, colSpan );
-
-                gridLayout.addView(button, gridParam);
-
-                //_imageButtonArray[i][j] = imageButton;
-
-                Log.i(TAG4LOGGING, "Spielfeld erzeugt: i=" + i + ", j=" + j + ".");
-
-                buttonId++;
             }
         }
 
-
-        LinearLayout oberstesLayout = findViewById(R.id.HauptLayoutMainActivity);
-        oberstesLayout.addView(gridLayout);
+        Log.i(TAG4LOGGING, "Anzahl Spielsteine: " + _anzahlSpielsteineZuBeginn);
     }
 }
