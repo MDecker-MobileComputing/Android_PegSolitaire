@@ -7,9 +7,9 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import static de.mide.pegsolitaire.model.SpielfeldEnum.LEER;
-import static de.mide.pegsolitaire.model.SpielfeldEnum.KEIN_FELD;
-import static de.mide.pegsolitaire.model.SpielfeldEnum.BESETZT;
+import static de.mide.pegsolitaire.model.SpielfeldStatusEnum.LEER;
+import static de.mide.pegsolitaire.model.SpielfeldStatusEnum.KEIN_FELD;
+import static de.mide.pegsolitaire.model.SpielfeldStatusEnum.BESETZT;
 
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -25,7 +25,7 @@ import android.widget.GridLayout;
 import android.widget.Space;
 import android.widget.Toast;
 
-import de.mide.pegsolitaire.model.SpielfeldEnum;
+import de.mide.pegsolitaire.model.SpielfeldStatusEnum;
 import de.mide.pegsolitaire.model.SpielfeldPosition;
 
 public class MainActivity extends AppCompatActivity implements OnClickListener {
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
      * Array mit zwei Dimensionen für initialen Zustand Spielfeld.
      * Der erste Index ist die Zeile, der zweite Index ist die Spalte.
      */
-    private static final SpielfeldEnum[][] SPIELFELD_VORLAGE_ARRAY =
+    private static final SpielfeldStatusEnum[][] SPIELFELD_VORLAGE_ARRAY =
         {
             { KEIN_FELD, KEIN_FELD, BESETZT, BESETZT, BESETZT, KEIN_FELD, KEIN_FELD },
             { KEIN_FELD, KEIN_FELD, BESETZT, BESETZT, BESETZT, KEIN_FELD, KEIN_FELD },
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         };
 
     /** Aktueller Zustand der einzelnen Felder. */
-    private SpielfeldEnum[][] _spielfeldArray = null;
+    private SpielfeldStatusEnum[][] _spielfeldArray = null;
 
     private int _anzahlZeilen = SPIELFELD_VORLAGE_ARRAY.length;
     private int _anzahlSpalten = SPIELFELD_VORLAGE_ARRAY[0].length;
@@ -215,13 +215,13 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         }
 
         _anzahlSpielsteineAktuell = 0;
-        _spielfeldArray = new SpielfeldEnum[_anzahlZeilen][_anzahlSpalten];
+        _spielfeldArray = new SpielfeldStatusEnum[_anzahlZeilen][_anzahlSpalten];
 
         for (int i = 0; i < _anzahlZeilen; i++) {
 
             for (int j = 0; j < _anzahlZeilen; j++) {
 
-                SpielfeldEnum spielfeldStatus = SPIELFELD_VORLAGE_ARRAY[i][j];
+                SpielfeldStatusEnum spielfeldStatus = SPIELFELD_VORLAGE_ARRAY[i][j];
 
                 _spielfeldArray[i][j] = spielfeldStatus;
 
@@ -312,7 +312,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         int indexZeile = position.getIndexZeile();
         int indexSpalte = position.getIndexSpalte();
 
-        SpielfeldEnum spielfeldStatus = _spielfeldArray[indexZeile][indexSpalte];
+        SpielfeldStatusEnum spielfeldStatus = _spielfeldArray[indexZeile][indexSpalte];
 
         switch (spielfeldStatus) {
 
@@ -337,12 +337,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
                 if (_quelleButton == null) {
 
-                    Toast.makeText(this, "Ungültiger Zug: Zuerst einen Spielstein wählen!", Toast.LENGTH_LONG).show();;
+                    Toast.makeText(this, "Ungültiger Zug: Zuerst einen Spielstein wählen!",
+                            Toast.LENGTH_LONG).show();
 
                 } else {
 
                     SpielfeldPosition startPosition = (SpielfeldPosition)  _quelleButton.getTag();
-                    if (pruefeGueltigerSprung(startPosition, position)) {
+                    SpielfeldPosition uebersprungPosition = getUebersprungenerStein(startPosition, position);
+                    if (uebersprungPosition != null) {
 
                     } else {
 
@@ -359,9 +361,61 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         }
     }
 
-    private boolean pruefeGueltigerSprung(SpielfeldPosition startPos, SpielfeldPosition zielPos) {
+    /**
+     * Überprüft, ob ein Zug von {@code startPos} zu {@code zielPos} gültig ist, also ob genau
+     * ein Stein übersprungen wird.
+     *
+     * @param startPos Position eines besetzten Felds
+     * @param zielPos Position eines leeres Felds
+     * @return {@code null} wenn ungültiger Zug; bei gültigem Zug Position des übersprungen
+     *         Spielsteins (das jetzt entfernt werden muss)
+     */
+    private SpielfeldPosition getUebersprungenerStein(SpielfeldPosition startPos, SpielfeldPosition zielPos) {
 
-        return false;
+        int startPositionZeile = startPos.getIndexZeile();
+        int startPositionSpalte = startPos.getIndexSpalte();
+
+        int zielPositionZeile = zielPos.getIndexZeile();
+        int zielPositionSpalte = zielPos.getIndexSpalte();
+
+        int uebersprungenZeile = -1;
+        int uebersprungenSpalte = -1;
+
+        if (startPositionZeile == zielPositionZeile) { // Zug in horizontaler Richtung
+
+            int deltaSpalte = zielPositionSpalte - startPositionSpalte;
+            if (Math.abs(deltaSpalte) != 1) {
+
+                Log.w(TAG4LOGGING, "Sprungweite für horizontalen Zug muss genau 1 betragen.");
+                return null;
+            }
+
+            // ist übersprungenes Feld besetzt?
+            uebersprungenZeile = startPositionZeile;
+            uebersprungenSpalte = startPositionSpalte + deltaSpalte;
+
+            
+
+
+        } else if (startPositionSpalte == zielPositionSpalte) { // Zug in vertikaler Richtung
+
+            // Sprung-Differenz muss genau 1 betragen
+
+            int deltaZeile = zielPositionZeile - startPositionZeile;
+            if (Math.abs(deltaZeile) != 1) {
+
+                Log.w(TAG4LOGGING, "Sprungweite für vertikalen Zug muss genau 1 betragen.");
+                return null;
+            }
+
+            // ist übersprungenes Feld besetzt?
+            uebersprungenZeile = startPositionZeile + deltaZeile;
+            uebersprungenSpalte = startPositionSpalte;
+
+        }
+
+        Log.w(TAG4LOGGING, "Diagonale Züge sind nicht zulässig.");
+        return null;
     }
 
 }
