@@ -388,7 +388,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
                         Button ubersprungButton = holeButtonFuerPosition(uebersprungPosition);
 
-                        sprungDurchfuehren(_startButton, geklicktButton, uebersprungPosition);
+                        sprungDurchfuehren(_startButton, geklicktButton, ubersprungButton);
 
                     } else {
 
@@ -408,26 +408,42 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
     /**
      * Sprung durchführen. Diese Methode darf nur aufgerufen werden, wenn vorher festgestellt wurde,
-     * dass es sich um einen gültigen Zug handelt.
+     * dass es sich um einen gültigen Zug handelt. Es wird die Darstellung der drei Buttons geändert,
+     * (inkl. Status in Array) sowie die Anzahl der Spielsteine aktualisiert. Außerdem
+     * wird die Member-Variable mit dem Start-Button auf {@code null} zurückgesetzt.
      */
-    private void sprungDurchfuehren(Button startButton, Button zielButton, SpielfeldPosition uebersprungenPos) {
+    private void sprungDurchfuehren(Button startButton, Button zielButton, Button uebersprungButton) {
+
+        SpielfeldPosition startPosition = (SpielfeldPosition)startButton.getTag();
+        SpielfeldPosition zielPosition = (SpielfeldPosition) zielButton.getTag();
+        SpielfeldPosition uebersprungPosition = (SpielfeldPosition) uebersprungButton.getTag();
+
+        int startZeile = startPosition.getIndexZeile();
+        int startSpalte = startPosition.getIndexSpalte();
+
+        int zielZeile = zielPosition.getIndexZeile();
+        int zielSpalte = zielPosition.getIndexZeile();
+
+        int uebersprungZeile = uebersprungPosition.getIndexZeile();
+        int uebersprungSpalte = uebersprungPosition.getIndexZeile();
 
         startButton.setText("");
-        int startButtonZeile = ((SpielfeldPosition)startButton.getTag()).getIndexZeile();
-        int startButtonSpalte = ((SpielfeldPosition)startButton.getTag()).getIndexSpalte();
-        _spielfeldArray[startButtonZeile][startButtonSpalte] = LEER;
+        startButton.setTextColor(TEXTFARBE_ROT);
 
         zielButton.setText(SPIELSTEIN_ZEICHEN);
-        int zielButtonZeile = ((SpielfeldPosition)zielButton.getTag()).getIndexZeile();
-        int zielButtonSpalte = ((SpielfeldPosition)zielButton.getTag()).getIndexSpalte();
-        _spielfeldArray[zielButtonZeile][zielButtonSpalte] = BESETZT;
         zielButton.setTextColor(TEXTFARBE_ROT);
 
-        _anzahlSpielsteineAktuell--;
-        aktualisiereAnzeigeAnzahlSpielsteine();
+        uebersprungButton.setText("");
+        uebersprungButton.setTextColor(TEXTFARBE_GRAU);
+
+        _spielfeldArray[startZeile][startSpalte] = LEER;
+        _spielfeldArray[zielZeile][zielSpalte] = BESETZT;
+        _spielfeldArray[uebersprungZeile][uebersprungSpalte] = LEER;
 
         _startButton = null;
 
+        _anzahlSpielsteineAktuell--;
+        aktualisiereAnzeigeAnzahlSpielsteine();
         if (_anzahlSpielsteineAktuell == 1) {
 
             zeigeGewonnenDialog();
@@ -435,26 +451,16 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     }
 
     /**
-     * Methode sucht im GridLayout nach dem Button, der als Tag
-     * {@code position} referenziert.
+     * Methode sucht im GridLayout nach dem Button für {@code position}.
      *
      * @param position Position auf Spielfeld von gesuchtem Button
-     * @return Gesuchter Button oder {@code null}, wenn der Button nicht gefunden wurde.
+     * @return Gesuchter Button
      */
     private Button holeButtonFuerPosition(SpielfeldPosition position) {
 
-        int anzahlKindelemente = _gridLayout.getChildCount();
+        int laufenderIndex = position.getLaufenderIndex(_anzahlSpalten);
 
-        for (int i = 0; i < anzahlKindelemente; i++) {
-
-            View view = _gridLayout.getChildAt(i);
-            if (view.getTag() == position) {
-
-                return (Button)view;
-            }
-        }
-
-        return null;
+        return (Button)_gridLayout.getChildAt(laufenderIndex);
     }
 
     /**

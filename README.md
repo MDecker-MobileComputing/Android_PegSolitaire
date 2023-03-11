@@ -12,7 +12,7 @@ This repository contains the code for a simple [Peg Solitaire](https://en.wikipe
 
 <br>
 
-![Screenshot: Initial State](screenshot_1.png)
+![Screenshot: Initial State](screenshot_1.png) &nbsp;  ![Screenshot after one move](screenshot_2.png)
 
 <br>
 

@@ -32,6 +32,17 @@ public class SpielfeldPosition {
         return _indexSpalte;
     }
 
+    /**
+     * Berechnet laufenden Index der Position (eine Zahl!)
+     *
+     * @param anzahlSpalten Anzahl der Spalten im Layout
+     * @return 0-basierter Index der Position
+     */
+    public int getLaufenderIndex(int anzahlSpalten) {
+
+        return anzahlSpalten*_indexZeile + _indexSpalte;
+    }
+
     @Override
     public String toString() {
 
