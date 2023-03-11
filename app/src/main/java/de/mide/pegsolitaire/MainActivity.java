@@ -1,6 +1,10 @@
 package de.mide.pegsolitaire;
 
+import android.content.DialogInterface;
+import android.view.View;
+import android.view.View.OnClickListener;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import static de.mide.pegsolitaire.SpielfeldEnum.LEER;
@@ -23,7 +27,7 @@ import android.widget.ImageButton;
 import android.widget.Space;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnClickListener {
 
     public static final String TAG4LOGGING = "PegSolitaire";
 
@@ -140,13 +144,34 @@ public class MainActivity extends AppCompatActivity {
 
         if (item.getItemId() == R.id.action_neues_spiel) {
 
-            Toast.makeText(this, "Funktion noch nicht implementiert :-(", Toast.LENGTH_LONG).show();
+            sicherheitsabfrageFuerNeuesSpiel();
             return true;
 
         } else {
 
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void sicherheitsabfrageFuerNeuesSpiel() {
+
+        DialogInterface.OnClickListener onJaButtonListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                initialisiereSpielfeld();
+            }
+        };
+
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setTitle("Sicherheitsabfrage");
+        dialogBuilder.setMessage("Wollen Sie wirklich ein neues Spiel beginnen?");
+
+        dialogBuilder.setPositiveButton("Ja", onJaButtonListener);
+        dialogBuilder.setNegativeButton("Nein", null);
+
+        AlertDialog dialog = dialogBuilder.create();
+        dialog.show();
     }
 
 
@@ -181,6 +206,8 @@ public class MainActivity extends AppCompatActivity {
                             buttonBesetzt.setTextColor(0xffff0000);
                             buttonBesetzt.setTextSize(22.0f); // "large"
                             buttonBesetzt.setLayoutParams(_layoutFuerSpielfeld);
+                            buttonBesetzt.setTag(i + "_" + j);
+                             buttonBesetzt.setOnClickListener(this);
                             gridLayout.addView(buttonBesetzt);
                             _anzahlSpielsteineAktuell++;
                             _buttonArray[i][j] = buttonBesetzt;
@@ -219,5 +246,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    /**
+     * Event-Handler-Methode für alle Buttons.
+     */
+    @Override
+    public void onClick(View view) {
+
+        Log.i(TAG4LOGGING, "Klick auf Button mit Tag " + view.getTag());
+    }
 
 }
