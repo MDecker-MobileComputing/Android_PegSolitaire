@@ -414,19 +414,20 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
      */
     private void sprungDurchfuehren(Button startButton, Button zielButton, Button uebersprungButton) {
 
-        SpielfeldPosition startPosition = (SpielfeldPosition)startButton.getTag();
-        SpielfeldPosition zielPosition = (SpielfeldPosition) zielButton.getTag();
+        SpielfeldPosition startPosition       = (SpielfeldPosition) startButton.getTag();
+        SpielfeldPosition zielPosition        = (SpielfeldPosition) zielButton.getTag();
         SpielfeldPosition uebersprungPosition = (SpielfeldPosition) uebersprungButton.getTag();
 
-        int startZeile = startPosition.getIndexZeile();
+        int startZeile  = startPosition.getIndexZeile();
         int startSpalte = startPosition.getIndexSpalte();
 
-        int zielZeile = zielPosition.getIndexZeile();
-        int zielSpalte = zielPosition.getIndexZeile();
+        int zielZeile  = zielPosition.getIndexZeile();
+        int zielSpalte = zielPosition.getIndexSpalte();
 
         int uebersprungZeile = uebersprungPosition.getIndexZeile();
-        int uebersprungSpalte = uebersprungPosition.getIndexZeile();
+        int uebersprungSpalte = uebersprungPosition.getIndexSpalte();
 
+        // Buttons aktualisieren
         startButton.setText("");
         startButton.setTextColor(TEXTFARBE_ROT);
 
@@ -436,6 +437,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         uebersprungButton.setText("");
         uebersprungButton.setTextColor(TEXTFARBE_GRAU);
 
+        // Status-Werte in Spielfeld-Array aktualisieren
         _spielfeldArray[startZeile][startSpalte] = LEER;
         _spielfeldArray[zielZeile][zielSpalte] = BESETZT;
         _spielfeldArray[uebersprungZeile][uebersprungSpalte] = LEER;
