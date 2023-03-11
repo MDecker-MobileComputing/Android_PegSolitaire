@@ -42,9 +42,11 @@ public class MainActivity extends AppCompatActivity {
             { KEIN_FELD, KEIN_FELD, BESETZT, BESETZT, BESETZT, KEIN_FELD, KEIN_FELD }
     };
 
-
     private int _anzahlZeilen = SPIELFELD_VORLAGE_ARRAY.length;
     private int _anzahlSpalten = SPIELFELD_VORLAGE_ARRAY[0].length;
+
+    /** Array mit Buttons für die einzelnen Spielfeldpositionen. */
+    private Button[][] _buttonArray = new Button[_anzahlZeilen][_anzahlSpalten];
 
     private int _displayBreite = -1;
     private int _displayHoehe = -1;
@@ -52,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
     private int _seitenlaengeSpielstein = -1;
 
     private int _anzahlSpielsteineAktuell = -1;
+
+    private ViewGroup.LayoutParams _layoutFuerSpielfeld = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
         // Die MainActivity ist in der Manifest-Datei auf Portrait-Modus festgesetzt, also
         // gilt immer: _displayBreite < _displayHoehe
         _seitenlaengeSpielstein = _displayBreite / _anzahlSpalten;
+
+        _layoutFuerSpielfeld = new ViewGroup.LayoutParams(_seitenlaengeSpielstein, _seitenlaengeSpielstein);
     }
 
     /**
@@ -161,9 +167,6 @@ public class MainActivity extends AppCompatActivity {
             gridLayout.removeAllViews();
         }
 
-
-        ViewGroup.LayoutParams layoutParamFuerFeld = new ViewGroup.LayoutParams( _seitenlaengeSpielstein,
-                                                                                 _seitenlaengeSpielstein);
         _anzahlSpielsteineAktuell = 0;
 
         for (int i = 0; i < _anzahlZeilen; i++) {
@@ -176,24 +179,28 @@ public class MainActivity extends AppCompatActivity {
                             Button buttonBesetzt = new Button(this);
                             buttonBesetzt.setText("■"); // Unicode-Zeichen "Black Square" für "Spielstein"
                             buttonBesetzt.setTextColor(0xffff0000);
-                            buttonBesetzt.setLayoutParams(layoutParamFuerFeld);
+                            buttonBesetzt.setTextSize(22.0f); // "large"
+                            buttonBesetzt.setLayoutParams(_layoutFuerSpielfeld);
                             gridLayout.addView(buttonBesetzt);
                             _anzahlSpielsteineAktuell++;
+                            _buttonArray[i][j] = buttonBesetzt;
                         break;
 
                     case LEER:
                             Button buttonLeer = new Button(this);
                             buttonLeer.setText("");
-                            buttonLeer.setLayoutParams(layoutParamFuerFeld);
+                            buttonLeer.setLayoutParams(_layoutFuerSpielfeld);
                             gridLayout.addView(buttonLeer);
+                            _buttonArray[i][j] = buttonLeer;
                         break;
 
-                    case KEIN_FELD:
+                    case KEIN_FELD: // außerhalb von Rand
                             Space space = new Space(this);
                             gridLayout.addView(space);
                         break;
 
-                    default: Log.e(TAG4LOGGING, "Unerwarteter Wert für initialen Zustand von Feld.");
+                    default: Log.e(TAG4LOGGING,
+                            "Unerwarteter Wert für initialen Zustand von Feld.");
                 }
 
             }
