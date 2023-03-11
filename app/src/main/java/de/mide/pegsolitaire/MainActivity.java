@@ -29,7 +29,7 @@ import de.mide.pegsolitaire.model.SpielfeldStatusEnum;
 import de.mide.pegsolitaire.model.SpielfeldPosition;
 
 /**
- * Activity für Spiel "Peg Solitaire".
+ * Activity für Spiel "Peg Solitaire" mit einem GridLayout als Spielfeld.
  * <br><br>>
  *
  * This project is licensed under the terms of the BSD 3-Clause License.
@@ -48,8 +48,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     private static final String SPIELSTEIN_ZEICHEN = "■";
 
     /**
-     * Array mit zwei Dimensionen für initialen Zustand Spielfeld.
+     * Array mit zwei Dimensionen für initialen Zustand des Spielfelds.
      * Der erste Index ist die Zeile, der zweite Index ist die Spalte.
+     * Variante: „Englisches Solitär“ (üblichste Variante?)
      */
     private static final SpielfeldStatusEnum[][] SPIELFELD_VORLAGE_ARRAY =
         {
@@ -68,9 +69,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
     /** Aktueller Zustand der einzelnen Felder als 2-D-Array. */
     private SpielfeldStatusEnum[][] _spielfeldArray = null;
-
-    /** Array mit Buttons für die einzelnen Spielfeldpositionen. */
-    private Button[][] _buttonArray = new Button[_anzahlZeilen][_anzahlSpalten];
 
 
     /** Seitenlänge für einen quadratischen Spielstein in Pixel. */
@@ -97,6 +95,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     private GridLayout _gridLayout = null;
 
 
+    /**
+     * Lifecycle-Methode: lädt Layout und initialisiert das Spiel.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -107,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
         _gridLayout = findViewById(R.id.spielfeldGridLayout);
 
-        holeDisplayAufloesung();
+        displayAufloesungAuswerten();
         actionBarKonfigurieren();
         initialisiereSpielfeld();
     }
@@ -116,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
      * Liest Auflösung von Display aus  und
      * schreibt die Werte in die entsprechenden Member-Variablen.
      */
-    private void holeDisplayAufloesung() {
+    private void displayAufloesungAuswerten() {
 
         WindowManager windowManager = getWindowManager();
         Display display = windowManager.getDefaultDisplay();
@@ -132,7 +133,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         // gilt immer: _displayBreite < _displayHoehe
         _seitenlaengeSpielstein = displayBreite / _anzahlSpalten;
 
-        _layoutFuerSpielfeld = new ViewGroup.LayoutParams(_seitenlaengeSpielstein, _seitenlaengeSpielstein);
+        _layoutFuerSpielfeld = new ViewGroup.LayoutParams(_seitenlaengeSpielstein,
+                                                          _seitenlaengeSpielstein);
     }
 
     /**
@@ -173,8 +175,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
      *
      * @param item Ausgewählter Menü-Eintrag.
      *
-     * @return Es wird genau dann <i>true</i> zurückgegeben, wenn wir
-     *         in dieser Methode das Ereignis verarbeiten konnten.
+     * @return Es wird genau dann <i>true</i> zurückgegeben, wenn wir in dieser
+     *         Methode das Ereignis verarbeiten konnten.
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -218,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
 
     /**
-     * GridLayout mit Spielfeld programmatisch befüllen.
+     * GridLayout mit Spielfeld initialisieren. Wird auch bei neuem Spiel aufgerufen.
      */
     private void initialisiereSpielfeld() {
 
@@ -246,11 +248,11 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 switch (spielfeldStatus) {
 
                     case BESETZT:
-                        erzeugeButtonBesetzt(i, j);
+                        erzeugeButton(i, j, true);
                         break;
 
                     case LEER:
-                        erzeugeButtonLeer(i, j);
+                        erzeugeButton(i, j, false);
                         break;
 
                     case KEIN_FELD: // außerhalb von Rand
@@ -270,57 +272,43 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     }
 
     /**
-     * Button für Position mit Spielstein auf Spielbrett.
+     * Erzeugt einen Button für die angegebene Position.
      *
-     * @param indexZeile Index der Zeile (0-basiert) im GridLayout
-     * @param indexSpalte Index der Spalte (0-basiert) im GridLayout
+     * @param indexZeile 0-basierter Index für Zeile des Buttons
+     * @param indexSpalte 0-basierter Index für Spalte des Buttons
+     * @param istBesetzt {@code true} gdw Button für eine Position mit Spielfigur ist.
      */
-    private void erzeugeButtonBesetzt(int indexZeile, int indexSpalte) {
+    private void erzeugeButton(int indexZeile, int indexSpalte, boolean istBesetzt) {
 
-        Button buttonBesetzt = new Button(this);
-        buttonBesetzt.setText(SPIELSTEIN_ZEICHEN);
-        buttonBesetzt.setTextColor(TEXTFARBE_ROT);
-        buttonBesetzt.setTextSize(22.0f); // "large" als Schriftgröße
-        buttonBesetzt.setLayoutParams(_layoutFuerSpielfeld);
-        buttonBesetzt.setOnClickListener(this);
+        Button button = new Button(this);
 
-        _gridLayout.addView(buttonBesetzt);
-        _buttonArray[indexZeile][indexSpalte] = buttonBesetzt;
-
-        _anzahlSpielsteineAktuell++;
+        button.setTextSize(22.0f); // "large" als Schriftgröße
+        button.setLayoutParams(_layoutFuerSpielfeld);
+        button.setOnClickListener(this);
+        button.setTextColor(TEXTFARBE_ROT);
 
         SpielfeldPosition pos = new SpielfeldPosition(indexZeile, indexSpalte);
-        buttonBesetzt.setTag(pos);
+        button.setTag(pos);
+
+        if (istBesetzt) {
+
+            button.setText(SPIELSTEIN_ZEICHEN);
+
+            _anzahlSpielsteineAktuell++;
+
+        } else {
+
+            button.setText("");
+        }
+
+        _gridLayout.addView(button);
     }
 
-    /**
-     * Button für Position ohne Spielstein auf Spielbrett.
-     *
-     * @param indexZeile Index der Zeile (0-basiert) im GridLayout
-     * @param indexSpalte Index der Spalte (0-basiert) im GridLayout
-     */
-    private void erzeugeButtonLeer(int indexZeile, int indexSpalte) {
-
-        Button buttonLeer = new Button(this);
-        buttonLeer.setText("");
-        buttonLeer.setLayoutParams(_layoutFuerSpielfeld);
-        buttonLeer.setOnClickListener(this);
-
-        // Einstellungen für den Fall, dass der Button mal ein besetztes Feld repräsentiert
-        buttonLeer.setTextColor(TEXTFARBE_ROT);
-        buttonLeer.setTextSize(22.0f);
-
-        _gridLayout.addView(buttonLeer);
-
-        _buttonArray[indexZeile][indexSpalte] = buttonLeer;
-
-        SpielfeldPosition pos = new SpielfeldPosition(indexZeile, indexSpalte);
-        buttonLeer.setTag(pos);
-    }
 
     /**
      * Anzeige der Anzahl der verbleibenden Spielsteine als Untertitel
-     * der ActionBar aktualisieren.
+     * der ActionBar aktualisieren. Diese Methode muss nach jedem
+     * Spielzug aufgerufen werden.
      */
     private void aktualisiereAnzeigeAnzahlSpielsteine() {
 
@@ -383,8 +371,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                     SpielfeldPosition startPosition = (SpielfeldPosition)  _startButton.getTag();
                     SpielfeldPosition uebersprungPosition = getUebersprungenerStein(startPosition, position);
                     if (uebersprungPosition != null) {
-
-                        Log.i(TAG4LOGGING, "Zug war gültig.");
 
                         Button ubersprungButton = holeButtonFuerPosition(uebersprungPosition);
 
@@ -453,7 +439,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     }
 
     /**
-     * Methode sucht im GridLayout nach dem Button für {@code position}.
+     * Methode holt aus dem GridLayout den Button für {@code position}.
      *
      * @param position Position auf Spielfeld von gesuchtem Button
      * @return Gesuchter Button
@@ -488,7 +474,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
      * @param startPos Position eines besetzten Felds
      * @param zielPos Position eines leeres Felds
      * @return {@code null} wenn ungültiger Zug; bei gültigem Zug Position des übersprungen
-     *         Spielsteins (das jetzt entfernt werden muss)
+     *         Spielsteins (der jetzt entfernt werden muss)
      */
     private SpielfeldPosition getUebersprungenerStein(SpielfeldPosition startPos, SpielfeldPosition zielPos) {
 
@@ -523,7 +509,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
                 return new SpielfeldPosition(uebersprungenZeile, uebersprungenSpalte);
             }
-
 
         } else if (startPositionSpalte == zielPositionSpalte) { // Zug in vertikaler Richtung
 

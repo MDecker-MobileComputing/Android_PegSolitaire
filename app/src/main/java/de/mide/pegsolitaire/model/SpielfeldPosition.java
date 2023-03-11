@@ -22,11 +22,19 @@ public class SpielfeldPosition {
         _indexSpalte = indexSpalte;
     }
 
+    /**
+     * Getter für Zeile.
+     * @return 0-basierter Index der Zeile
+     */
     public int getIndexZeile() {
 
         return _indexZeile;
     }
 
+    /**
+     * Getter für Spalte
+     * @return 0-basierter Index der Spalte.
+     */
     public int getIndexSpalte() {
 
         return _indexSpalte;
