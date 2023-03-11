@@ -14,20 +14,7 @@
         android:layout_centerHorizontal="true"
         android:columnCount="7"
         android:rowCount="7"
-        android:background="@android:color/background_light" >
-
-        <Button android:id="@+id/button_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="Button 1" />
-
-        <Space android:layout_columnWeight="1" />
-
-        <Button android:id="@+id/button_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Button 2" />
+        android:background="#FF0000" >
 
     </GridLayout>
 
