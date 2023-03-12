@@ -261,7 +261,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                     default: Log.e(TAG4LOGGING,
                             "Unerwarteter Wert für initialen Zustand von Feld.");
                 }
-
             }
         }
 
