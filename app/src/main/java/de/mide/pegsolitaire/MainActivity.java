@@ -226,7 +226,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         if (_gridLayout.getRowCount() == 0) {
 
             _gridLayout.setColumnCount(_anzahlSpalten);
-            _gridLayout.setColumnCount(_anzahlZeilen);
 
         } else { // Methode wird nicht zum ersten Mal aufgerufen
 
