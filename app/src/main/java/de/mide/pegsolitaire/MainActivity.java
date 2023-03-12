@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     /** Aktueller Zustand der einzelnen Felder als 2-D-Array. */
     private SpielfeldStatusEnum[][] _spielfeldArray = null;
 
-
     /** Seitenlänge für einen quadratischen Spielstein in Pixel. */
     private int _seitenlaengeSpielstein = -1;
 
@@ -91,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
      */
     private Button _startButton = null;
 
-    /** GridLayout mit Spielfeld. */
+    /** GridLayout mit Spielfeld, wird programmatisch gefüllt. */
     private GridLayout _gridLayout = null;
 
 
@@ -133,8 +132,8 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         // gilt immer: _displayBreite < _displayHoehe
         _seitenlaengeSpielstein = displayBreite / _anzahlSpalten;
 
-        _layoutFuerSpielfeld = new ViewGroup.LayoutParams(_seitenlaengeSpielstein,
-                                                          _seitenlaengeSpielstein);
+        _layoutFuerSpielfeld = new ViewGroup.LayoutParams( _seitenlaengeSpielstein,
+                                                           _seitenlaengeSpielstein );
     }
 
     /**
@@ -256,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                         break;
 
                     case KEIN_FELD: // außerhalb von Rand
-                            Space space = new Space(this); // Dummy-Element
+                        Space space = new Space(this); // Dummy-Element
                         _gridLayout.addView(space);
                         break;
 
@@ -346,7 +345,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 if (_startButton != null) {
 
                     Toast.makeText(this, "Ungültiger Zug!",
-                            Toast.LENGTH_LONG).show();
+                                   Toast.LENGTH_LONG).show();
                     _startButton.setTextColor(TEXTFARBE_ROT);
                     _startButton = null;
 
@@ -364,7 +363,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 if (_startButton == null) {
 
                     Toast.makeText(this, "Ungültiger Zug: Zuerst einen Spielstein wählen!",
-                            Toast.LENGTH_LONG).show();
+                                   Toast.LENGTH_LONG).show();
 
                 } else {
 
@@ -388,7 +387,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
             default:
                 Log.e(TAG4LOGGING, "Interner Fehler: Unerwarteter Status von angeklicktem Spielfeld: " +
-                        spielfeldStatus);
+                      spielfeldStatus);
         }
     }
 
@@ -424,10 +423,10 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         uebersprungButton.setTextColor(TEXTFARBE_GRAU);
 
         // Status-Werte in Spielfeld-Array aktualisieren
-        _spielfeldArray[startZeile][startSpalte] = LEER;
-        _spielfeldArray[zielZeile][zielSpalte] = BESETZT;
+        _spielfeldArray[startZeile][startSpalte]             = LEER;
         _spielfeldArray[uebersprungZeile][uebersprungSpalte] = LEER;
-
+        _spielfeldArray[zielZeile][zielSpalte]               = BESETZT;
+        
         _startButton = null;
 
         _anzahlSpielsteineAktuell--;
@@ -468,23 +467,23 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
 
     /**
-     * Überprüft, ob ein Zug von {@code startPos} zu {@code zielPos} gültig ist, also ob genau
-     * ein Stein übersprungen wird.
+     * Überprüft, ob ein Zug von {@code startPos} zu {@code zielPos} gültig ist, 
+     * also ob genau ein Stein übersprungen wird.
      *
      * @param startPos Position eines besetzten Felds
      * @param zielPos Position eines leeres Felds
-     * @return {@code null} wenn ungültiger Zug; bei gültigem Zug Position des übersprungen
-     *         Spielsteins (der jetzt entfernt werden muss)
+     * @return {@code null} wenn ungültiger Zug; bei gültigem Zug Position 
+     *         des übersprungen Spielsteins (der jetzt entfernt werden muss)
      */
     private SpielfeldPosition getUebersprungenerStein(SpielfeldPosition startPos, SpielfeldPosition zielPos) {
 
-        int startPositionZeile = startPos.getIndexZeile();
+        int startPositionZeile  = startPos.getIndexZeile();
         int startPositionSpalte = startPos.getIndexSpalte();
 
-        int zielPositionZeile = zielPos.getIndexZeile();
+        int zielPositionZeile  = zielPos.getIndexZeile();
         int zielPositionSpalte = zielPos.getIndexSpalte();
 
-        int uebersprungenZeile = -1;
+        int uebersprungenZeile  = -1;
         int uebersprungenSpalte = -1;
 
         if (startPositionZeile == zielPositionZeile) { // Zug in horizontaler Richtung
@@ -497,7 +496,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             }
 
             // ist übersprungenes Feld besetzt?
-            uebersprungenZeile = startPositionZeile;
+            uebersprungenZeile  = startPositionZeile;
             uebersprungenSpalte = startPositionSpalte + deltaSpalte/2;
 
             if (_spielfeldArray[uebersprungenZeile][uebersprungenSpalte] != BESETZT) {
@@ -522,7 +521,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             }
 
             // ist übersprungenes Feld besetzt?
-            uebersprungenZeile = startPositionZeile + deltaZeile/2;
+            uebersprungenZeile  = startPositionZeile + deltaZeile/2;
             uebersprungenSpalte = startPositionSpalte;
 
             if (_spielfeldArray[uebersprungenZeile][uebersprungenSpalte] != BESETZT) {
