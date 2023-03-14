@@ -63,6 +63,19 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             { KEIN_FELD, KEIN_FELD, BESETZT, BESETZT, BESETZT, KEIN_FELD, KEIN_FELD }
         };
 
+    /*
+    // für Testzwecke: Spielfeld enthält nur zwei nebeneinanderliege Steine
+    private static final SpielfeldStatusEnum[][] SPIELFELD_VORLAGE_ARRAY =
+            {
+                    { KEIN_FELD, KEIN_FELD, LEER   , LEER   , LEER, KEIN_FELD, KEIN_FELD },
+                    { KEIN_FELD, KEIN_FELD, LEER   , LEER   , LEER, KEIN_FELD, KEIN_FELD },
+                    { LEER     , LEER     , LEER   , LEER   , LEER, LEER     , LEER      },
+                    { LEER     , BESETZT  , BESETZT, LEER   , LEER, LEER     , LEER      },
+                    { LEER     , LEER     , LEER   , LEER   , LEER, LEER     , LEER      },
+                    { KEIN_FELD, KEIN_FELD, LEER   , LEER   , LEER, KEIN_FELD, KEIN_FELD },
+                    { KEIN_FELD, KEIN_FELD, LEER   , LEER   , LEER, KEIN_FELD, KEIN_FELD }
+            };
+     */
     private int _anzahlZeilen = SPIELFELD_VORLAGE_ARRAY.length;
 
     private int _anzahlSpalten = SPIELFELD_VORLAGE_ARRAY[0].length;
