@@ -242,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
         } else { // Methode wird nicht zum ersten Mal aufgerufen
 
-            _gridLayout.removeAllViews();
+            _gridLayout.removeAllViews(); // Tabula-Rasa-Ansatz
         }
 
         _anzahlSpielsteineAktuell = 0;
@@ -250,7 +250,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
         for (int i = 0; i < _anzahlZeilen; i++) {
 
-            for (int j = 0; j < _anzahlZeilen; j++) {
+            for (int j = 0; j < _anzahlSpalten; j++) {
 
                 SpielfeldStatusEnum spielfeldStatus = SPIELFELD_VORLAGE_ARRAY[i][j];
 
@@ -340,7 +340,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     @Override
     public void onClick(View view) {
 
-        Button geklicktButton = (Button)view;
+        Button geklicktButton = (Button) view;
 
         SpielfeldPosition position = (SpielfeldPosition) geklicktButton.getTag();
 
@@ -375,7 +375,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
                     Toast.makeText(this, "Ungültiger Zug: Zuerst einen Spielstein wählen!",
                                    Toast.LENGTH_LONG).show();
-
                 } else {
 
                     SpielfeldPosition startPosition = (SpielfeldPosition)  _startButton.getTag();
@@ -458,7 +457,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
         int laufenderIndex = position.getLaufenderIndex(_anzahlSpalten);
 
-        return (Button)_gridLayout.getChildAt(laufenderIndex);
+        return (Button) _gridLayout.getChildAt(laufenderIndex);
     }
 
     /**
