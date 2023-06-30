@@ -9,6 +9,10 @@ How to solve this game is described [here](https://www.wikihow.com/Win-the-Peg-S
 
 <br>
 
+See [this repository](https://github.com/MDecker-MobileComputing/Ionic_PegSolitaire) for the same game as Ionic app.
+
+<br>
+
 ----
 
 ## Screenshots ##
