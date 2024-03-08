@@ -10,6 +10,7 @@ public class SpielfeldPosition {
 
     private int _indexSpalte = -1;
 
+
     /**
      * Konstruktor, um beide Attribute der Klasse zu setzen.
      *
@@ -22,6 +23,7 @@ public class SpielfeldPosition {
         _indexSpalte = indexSpalte;
     }
 
+
     /**
      * Getter für Zeile.
      * @return 0-basierter Index der Zeile
@@ -31,6 +33,7 @@ public class SpielfeldPosition {
         return _indexZeile;
     }
 
+
     /**
      * Getter für Spalte
      * @return 0-basierter Index der Spalte.
@@ -39,6 +42,7 @@ public class SpielfeldPosition {
 
         return _indexSpalte;
     }
+
 
     /**
      * Berechnet laufenden Index der Position (eine Zahl!)
@@ -51,6 +55,12 @@ public class SpielfeldPosition {
         return anzahlSpalten*_indexZeile + _indexSpalte;
     }
 
+
+    /**
+     * Methode für String-Repräsentation aufrufendes Objekt
+     *
+     * @return String mit Zeile und Spalte
+     */
     @Override
     public String toString() {
 

@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         initialisiereSpielfeld();
     }
 
+
     /**
      * Liest Auflösung von Display aus  und
      * schreibt die Werte in die entsprechenden Member-Variablen.
@@ -149,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                                                            _seitenlaengeSpielstein );
     }
 
+
     /**
      * Konfiguration der ActionBar; siehe auch Methode {@link #onCreateOptionsMenu(Menu)}.
      * Der Untertitel mit der aktuellen Anzahl der Spielsteine wird von der Methode
@@ -166,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         actionBar.setTitle( "Peg Solitaire" );
     }
 
+
     /**
      * Menü-Einträge für ActionBar aus Ressourcendatei laden.
      * Zugehörige Event-Handler-Methode:
@@ -179,6 +182,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
         return super.onCreateOptionsMenu(menu);
     }
+
 
     /**
      * Event-Handler für Menü-Einträge der Action-Bar; die Menü-Einträge werden
@@ -203,6 +207,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             return super.onOptionsItemSelected(item);
         }
     }
+
 
     /**
      * Der Nutzer wird mit einem Dialog gefragt, ob er wirklich ein neues Spiel starten
@@ -281,6 +286,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         aktualisiereAnzeigeAnzahlSpielsteine();
     }
 
+
     /**
      * Erzeugt einen Button für die angegebene Position.
      *
@@ -328,6 +334,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             actionBar.setSubtitle( "Anzahl Spielsteine: " + _anzahlSpielsteineAktuell );
         }
     }
+
 
     /**
      * Event-Handler-Methode für alle Buttons.
@@ -401,6 +408,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         }
     }
 
+
     /**
      * Sprung durchführen. Diese Methode darf nur aufgerufen werden, wenn vorher festgestellt wurde,
      * dass es sich um einen gültigen Zug handelt. Es wird die Darstellung der drei Buttons geändert,
@@ -447,6 +455,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         }
     }
 
+
     /**
      * Methode holt aus dem GridLayout den Button für {@code position}.
      *
@@ -459,6 +468,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
         return (Button) _gridLayout.getChildAt(laufenderIndex);
     }
+
 
     /**
      * Methode zeigt einen Dialog an, wenn der Nutzer das Spiel gelöst hat
