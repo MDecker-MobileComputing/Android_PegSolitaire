@@ -6,8 +6,10 @@ package de.mide.pegsolitaire.model;
  */
 public class SpielfeldPosition {
 
+    /** 0-basierter Index der Zeile */
     private int _indexZeile = -1;
-
+    
+    /** 0-basierter Index der Spalte */
     private int _indexSpalte = -1;
 
 
@@ -19,7 +21,7 @@ public class SpielfeldPosition {
      */
     public SpielfeldPosition(int indexZeile, int indexSpalte) {
 
-        _indexZeile = indexZeile;
+        _indexZeile  = indexZeile;
         _indexSpalte = indexSpalte;
     }
 
@@ -57,7 +59,7 @@ public class SpielfeldPosition {
 
 
     /**
-     * Methode für String-Repräsentation aufrufendes Objekt
+     * Methode für String-Repräsentation des aufrufenden Objekts.
      *
      * @return String mit Zeile und Spalte
      */
