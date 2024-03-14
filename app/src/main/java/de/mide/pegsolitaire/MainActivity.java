@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                     { KEIN_FELD, KEIN_FELD, LEER   , LEER   , LEER, KEIN_FELD, KEIN_FELD }
             };
      */
+
     private int _anzahlZeilen = SPIELFELD_VORLAGE_ARRAY.length;
 
     private int _anzahlSpalten = SPIELFELD_VORLAGE_ARRAY[0].length;
