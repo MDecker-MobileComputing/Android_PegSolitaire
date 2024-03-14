@@ -292,8 +292,10 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
      * Erzeugt einen Button für die angegebene Position.
      *
      * @param indexZeile 0-basierter Index für Zeile des Buttons
+     *
      * @param indexSpalte 0-basierter Index für Spalte des Buttons
-     * @param istBesetzt {@code true} gdw Button für eine Position mit Spielfigur ist.
+     *
+     * @param istBesetzt {@code true} gdw. Button für eine Position mit Spielfigur ist
      */
     private void erzeugeButton(int indexZeile, int indexSpalte, boolean istBesetzt) {
 
@@ -461,6 +463,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
      * Methode holt aus dem GridLayout den Button für {@code position}.
      *
      * @param position Position auf Spielfeld von gesuchtem Button
+     *
      * @return Gesuchter Button
      */
     private Button holeButtonFuerPosition(SpielfeldPosition position) {
@@ -492,7 +495,9 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
      * also ob genau ein Stein übersprungen wird.
      *
      * @param startPos Position eines besetzten Felds
+     *
      * @param zielPos Position eines leeres Felds
+     *
      * @return {@code null} wenn ungültiger Zug; bei gültigem Zug Position 
      *         des übersprungen Spielsteins (der jetzt entfernt werden muss)
      */
