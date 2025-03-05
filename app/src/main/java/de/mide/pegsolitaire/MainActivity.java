@@ -28,6 +28,7 @@ import android.widget.Toast;
 import de.mide.pegsolitaire.model.SpielfeldStatusEnum;
 import de.mide.pegsolitaire.model.SpielfeldPosition;
 
+
 /**
  * Activity für Spiel "Peg Solitaire" mit einem GridLayout als Spielfeld.
  * <br><br>>
@@ -53,15 +54,15 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
      * Variante: „Englisches Solitär“ (üblichste Variante?)
      */
     private static final SpielfeldStatusEnum[][] SPIELFELD_VORLAGE_ARRAY =
-        {
-            { KEIN_FELD, KEIN_FELD, BESETZT, BESETZT, BESETZT, KEIN_FELD, KEIN_FELD },
-            { KEIN_FELD, KEIN_FELD, BESETZT, BESETZT, BESETZT, KEIN_FELD, KEIN_FELD },
-            { BESETZT  , BESETZT  , BESETZT, BESETZT, BESETZT, BESETZT  , BESETZT   },
-            { BESETZT  , BESETZT  , BESETZT, LEER   , BESETZT, BESETZT  , BESETZT   },
-            { BESETZT  , BESETZT  , BESETZT, BESETZT, BESETZT, BESETZT  , BESETZT   },
-            { KEIN_FELD, KEIN_FELD, BESETZT, BESETZT, BESETZT, KEIN_FELD, KEIN_FELD },
-            { KEIN_FELD, KEIN_FELD, BESETZT, BESETZT, BESETZT, KEIN_FELD, KEIN_FELD }
-        };
+            {
+                    { KEIN_FELD, KEIN_FELD, BESETZT, BESETZT, BESETZT, KEIN_FELD, KEIN_FELD },
+                    { KEIN_FELD, KEIN_FELD, BESETZT, BESETZT, BESETZT, KEIN_FELD, KEIN_FELD },
+                    { BESETZT  , BESETZT  , BESETZT, BESETZT, BESETZT, BESETZT  , BESETZT   },
+                    { BESETZT  , BESETZT  , BESETZT, LEER   , BESETZT, BESETZT  , BESETZT   },
+                    { BESETZT  , BESETZT  , BESETZT, BESETZT, BESETZT, BESETZT  , BESETZT   },
+                    { KEIN_FELD, KEIN_FELD, BESETZT, BESETZT, BESETZT, KEIN_FELD, KEIN_FELD },
+                    { KEIN_FELD, KEIN_FELD, BESETZT, BESETZT, BESETZT, KEIN_FELD, KEIN_FELD }
+            };
 
     /*
     // für Testzwecke: Spielfeld enthält nur zwei nebeneinanderliege Steine
@@ -148,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         _seitenlaengeSpielstein = displayBreite / _anzahlSpalten;
 
         _layoutFuerSpielfeld = new ViewGroup.LayoutParams( _seitenlaengeSpielstein,
-                                                           _seitenlaengeSpielstein );
+                _seitenlaengeSpielstein );
     }
 
 
@@ -366,7 +367,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 if (_startButton != null) {
 
                     Toast.makeText(this, "Ungültiger Zug!",
-                                   Toast.LENGTH_LONG).show();
+                            Toast.LENGTH_LONG).show();
                     _startButton.setTextColor(TEXTFARBE_ROT);
                     _startButton = null;
 
@@ -384,7 +385,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
                 if (_startButton == null) {
 
                     Toast.makeText(this, "Ungültiger Zug: Zuerst einen Spielstein wählen!",
-                                   Toast.LENGTH_LONG).show();
+                            Toast.LENGTH_LONG).show();
                 } else {
 
                     SpielfeldPosition startPosition = (SpielfeldPosition)  _startButton.getTag();
@@ -407,7 +408,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
             default:
                 Log.e(TAG4LOGGING, "Interner Fehler: Unerwarteter Status von angeklicktem Spielfeld: " +
-                      spielfeldStatus);
+                        spielfeldStatus);
         }
     }
 
@@ -447,7 +448,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         _spielfeldArray[startZeile][startSpalte]             = LEER;
         _spielfeldArray[uebersprungZeile][uebersprungSpalte] = LEER;
         _spielfeldArray[zielZeile][zielSpalte]               = BESETZT;
-        
+
         _startButton = null;
 
         _anzahlSpielsteineAktuell--;
@@ -491,14 +492,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 
 
     /**
-     * Überprüft, ob ein Zug von {@code startPos} zu {@code zielPos} gültig ist, 
+     * Überprüft, ob ein Zug von {@code startPos} zu {@code zielPos} gültig ist,
      * also ob genau ein Stein übersprungen wird.
      *
      * @param startPos Position eines besetzten Felds
      *
      * @param zielPos Position eines leeres Felds
      *
-     * @return {@code null} wenn ungültiger Zug; bei gültigem Zug Position 
+     * @return {@code null} wenn ungültiger Zug; bei gültigem Zug Position
      *         des übersprungen Spielsteins (der jetzt entfernt werden muss)
      */
     private SpielfeldPosition getUebersprungenerStein(SpielfeldPosition startPos, SpielfeldPosition zielPos) {

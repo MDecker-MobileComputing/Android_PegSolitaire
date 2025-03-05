@@ -8,7 +8,7 @@ public class SpielfeldPosition {
 
     /** 0-basierter Index der Zeile */
     private int _indexZeile = -1;
-    
+
     /** 0-basierter Index der Spalte */
     private int _indexSpalte = -1;
 

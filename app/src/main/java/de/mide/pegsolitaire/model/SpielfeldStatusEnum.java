@@ -1,5 +1,6 @@
 package de.mide.pegsolitaire.model;
 
+
 /**
  * Aufzählungstyp für den Status der einzelnen Position im GridLayout.
  */
